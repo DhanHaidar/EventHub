@@ -1,9 +1,12 @@
-<template lang="">
+<template>
     <div>
         <NavBar :name="userName" :role="roleId" />
         <div class="container mt-4 d-flex justify-content-center">
             <!-- Card Wrapper -->
-            <div class="card shadow-sm rounded-4 w-100" style="max-width: 1000px">
+            <div
+                class="card shadow-sm rounded-4 w-100"
+                style="max-width: 1000px"
+            >
                 <div class="card-body">
                     <h5 class="mb-4 fw-semibold">Tambah Event Baru</h5>
                     <form @submit.prevent="submitForm">
@@ -38,6 +41,7 @@
                                 type="file"
                                 @change="handleFileUpload"
                                 class="form-control bg-light"
+                                accept="image/*"
                                 required
                             />
                         </div>
@@ -73,7 +77,9 @@
                                 class="form-select bg-light"
                                 required
                             >
-                                <option disabled value="">-- Pilih Kategori --</option>
+                                <option disabled value="">
+                                    -- Pilih Kategori --
+                                </option>
                                 <option value="1">Akademik</option>
                                 <option value="2">Kuliner</option>
                                 <option value="3">Seni & Budaya</option>
@@ -86,7 +92,9 @@
                         </div>
 
                         <!-- Tombol -->
-                        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-3">
+                        <div
+                            class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-3"
+                        >
                             <button
                                 type="submit"
                                 class="btn btn-success px-4 rounded-3 w-100 w-sm-auto"
@@ -109,84 +117,88 @@
 </template>
 
 <script>
-import router from '@/router'
-import NavBar from '@/components/icons/NavBar.vue'
-import axios from 'axios'
+import router from "@/router";
+import NavBar from "@/components/icons/NavBar.vue";
+import axios from "axios";
 
 export default {
     components: { NavBar },
     data() {
         return {
-            roleId: '',
-            userName: '',
+            roleId: "",
+            userName: "",
+            apiUrl: import.meta.env.VITE_API_URL, // ✅ gunakan env otomatis
             form: {
-                judul: '',
-                deskripsi: '',
-                gambar_file: null, // sesuai field backend
-                tanggal: '',
-                lokasi: '',
-                kategory_id: '',
+                judul: "",
+                deskripsi: "",
+                gambar_file: null,
+                tanggal: "",
+                lokasi: "",
+                kategory_id: "",
             },
-        }
+        };
     },
     mounted() {
-        this.userName = localStorage.getItem('name')
-        this.roleId = localStorage.getItem('role_id')
-        if (!this.userName || this.userName === '') {
-            router.push({ name: 'login' })
+        this.userName = localStorage.getItem("name");
+        this.roleId = localStorage.getItem("role_id");
+        if (!this.userName || this.userName === "") {
+            router.push({ name: "login" });
         }
     },
     methods: {
         handleFileUpload(event) {
-            this.form.gambar_file = event.target.files[0]
+            this.form.gambar_file = event.target.files[0];
         },
+
         async submitForm() {
             try {
-                const formData = new FormData()
-                formData.append('judul', this.form.judul)
-                formData.append('deskripsi', this.form.deskripsi)
-                formData.append('tanggal', this.form.tanggal)
-                formData.append('lokasi', this.form.lokasi)
-                formData.append('kategory_id', this.form.kategory_id)
+                const formData = new FormData();
+                formData.append("judul", this.form.judul);
+                formData.append("deskripsi", this.form.deskripsi);
+                formData.append("tanggal", this.form.tanggal);
+                formData.append("lokasi", this.form.lokasi);
+                formData.append("kategory_id", this.form.kategory_id);
 
                 if (this.form.gambar_file) {
-                    formData.append('gambar_file', this.form.gambar_file)
+                    formData.append("gambar_file", this.form.gambar_file);
                 }
 
+                // ✅ Gunakan URL dari environment agar cocok di ngrok/production
                 const response = await axios.post(
-                    'http://localhost/Suka-projek/Kalijaga-EventHub-copy1-/public/api/event',
+                    `${import.meta.env.VITE_API_URL}/api/event`,
                     formData,
                     {
                         headers: {
-                            'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
+                            "Content-Type": "multipart/form-data",
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "token"
+                            )}`,
                         },
-                    },
-                )
+                    }
+                );
 
-                alert('Event berhasil ditambahkan!')
-                console.log(response.data)
+                alert("Event berhasil ditambahkan!");
+                console.log(response.data);
 
-                // reset form
+                // Reset form setelah sukses
                 this.form = {
-                    judul: '',
-                    deskripsi: '',
+                    judul: "",
+                    deskripsi: "",
                     gambar_file: null,
-                    tanggal: '',
-                    lokasi: '',
-                    kategory_id: '',
-                }
+                    tanggal: "",
+                    lokasi: "",
+                    kategory_id: "",
+                };
             } catch (error) {
-                console.error(error)
-                alert('Gagal menyimpan event!')
+                console.error(error);
+                alert("Gagal menyimpan event!");
             }
         },
     },
-}
+};
 </script>
 
 <style scoped>
-/* Tambahan styling opsional */
 .card {
     border: none;
 }

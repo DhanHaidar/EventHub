@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <header v-if="$route.name != 'login'">
         <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
             <div class="container-fluid">
@@ -15,14 +15,21 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div
+                    class="collapse navbar-collapse"
+                    id="navbarSupportedContent"
+                >
                     <!-- menu kiri -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item me-2">
-                            <RouterLink to="/" class="nav-link custom-btn"> Home </RouterLink>
+                            <RouterLink to="/" class="nav-link custom-btn">
+                                Home
+                            </RouterLink>
                         </li>
                         <li class="nav-item me-2">
-                            <RouterLink to="/event" class="nav-link custom-btn"> Event </RouterLink>
+                            <RouterLink to="/event" class="nav-link custom-btn">
+                                Event
+                            </RouterLink>
                         </li>
                         <li v-if="role == 1" class="nav-item me-2">
                             <RouterLink
@@ -56,35 +63,42 @@
 </template>
 
 <script>
-import axios from 'axios'
-import router from '@/router'
+import axios from "axios";
+import router from "@/router";
 
 export default {
-    props: ['name', 'role'],
+    props: ["name", "role"],
+    data() {
+        return {
+            apiUrl: import.meta.env.VITE_API_URL, // ambil dari .env
+        };
+    },
     methods: {
         logout() {
             axios
-                .get(
-                    'http://localhost/Suka-projek/Kalijaga-EventHub-copy1-/public/api/auth/logout',
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
+                .get(`${this.apiUrl}/api/auth/logout`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
                     },
-                )
+                })
                 .then(() => {
-                    localStorage.removeItem('email')
-                    localStorage.removeItem('name')
-                    localStorage.removeItem('role_id')
-                    localStorage.removeItem('token')
-                    router.push({ name: 'login' })
+                    // hapus data user dari localStorage
+                    localStorage.removeItem("email");
+                    localStorage.removeItem("name");
+                    localStorage.removeItem("role_id");
+                    localStorage.removeItem("token");
+
+                    // arahkan ke halaman login
+                    router.push({ name: "login" });
                 })
                 .catch((error) => {
-                    console.log(error)
-                })
+                    console.error("Logout error:", error);
+                });
         },
     },
-}
+};
 </script>
 
 <style scoped>

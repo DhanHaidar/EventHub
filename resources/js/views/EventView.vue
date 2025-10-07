@@ -25,22 +25,36 @@
                     :key="event.id"
                     class="col-12 col-md-6 col-lg-4 col-xl-3"
                 >
-                    <div class="event-card h-100 d-flex flex-column" @click="goToDetail(event.id)">
+                    <div
+                        class="event-card h-100 d-flex flex-column"
+                        @click="goToDetail(event.id)"
+                    >
                         <!-- Gambar Event -->
-                        <img class="event-img" :src="url + event.gambar" alt="Event image" />
+                        <img
+                            class="event-img"
+                            :src="url + event.gambar"
+                            alt="Event image"
+                        />
 
                         <!-- Isi Card -->
                         <div class="p-3 d-flex flex-column flex-grow-1">
                             <!-- Header -->
-                            <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div
+                                class="d-flex justify-content-between align-items-start mb-2"
+                            >
                                 <h5 class="fw-bold">{{ event.judul }}</h5>
-                                <div class="d-flex flex-column align-items-end gap-1">
+                                <div
+                                    class="d-flex flex-column align-items-end gap-1"
+                                >
                                     <span
                                         class="badge text-capitalize"
                                         :class="{
-                                            'bg-purple text-white': event.kategori === 'seminar',
-                                            'bg-warning text-dark': event.kategori === 'workshop',
-                                            'bg-secondary text-white': event.kategori === 'ukm',
+                                            'bg-purple text-white':
+                                                event.kategori === 'seminar',
+                                            'bg-warning text-dark':
+                                                event.kategori === 'workshop',
+                                            'bg-secondary text-white':
+                                                event.kategori === 'ukm',
                                         }"
                                     >
                                         {{ event.kategori }}
@@ -54,15 +68,20 @@
                             </p>
 
                             <!-- Info -->
-                            <ul class="list-unstyled small text-muted mt-2 mb-0">
+                            <ul
+                                class="list-unstyled small text-muted mt-2 mb-0"
+                            >
                                 <li class="mb-1">
-                                    <i class="bi bi-calendar-event me-2"></i>{{ event.tanggal }}
+                                    <i class="bi bi-calendar-event me-2"></i
+                                    >{{ event.tanggal }}
                                 </li>
                                 <li class="mb-1">
-                                    <i class="bi bi-clock me-2"></i>{{ event.jam }}
+                                    <i class="bi bi-clock me-2"></i
+                                    >{{ event.jam }}
                                 </li>
                                 <li class="mb-1">
-                                    <i class="bi bi-geo-alt me-2"></i>{{ event.lokasi }}
+                                    <i class="bi bi-geo-alt me-2"></i
+                                    >{{ event.lokasi }}
                                 </li>
                             </ul>
 
@@ -84,90 +103,99 @@
 </template>
 
 <script>
-import NavBar from '@/components/icons/NavBar.vue'
-import axios from 'axios'
+import NavBar from "@/components/icons/NavBar.vue";
+import axios from "axios";
 
-const API_URL = 'http://localhost/Suka-projek/Kalijaga-EventHub-copy1-/public/api'
+const API_URL = import.meta.env.VITE_API_URL + "/api";
 
 export default {
     components: { NavBar },
     data() {
         return {
-            userName: '',
-            roleId: '',
+            userName: "",
+            roleId: "",
             events: [],
             filteredEvents: [],
-            keyword: '',
-            url: 'http://localhost/Suka-projek/Kalijaga-EventHub-copy1-/public/storage/events/',
-        }
+            keyword: "",
+            url: import.meta.env.VITE_API_URL + "/storage/events/",
+        };
     },
     mounted() {
-        this.userName = localStorage.getItem('name')
-        this.roleId = localStorage.getItem('role_id')
-        const token = localStorage.getItem('token')
+        this.userName = localStorage.getItem("name");
+        this.roleId = localStorage.getItem("role_id");
+        const token = localStorage.getItem("token");
 
         if (!this.userName || !token) {
-            this.$router.push({ name: 'login' })
-            return
+            this.$router.push({ name: "login" });
+            return;
         }
 
-        this.getItems()
+        this.getItems();
     },
     methods: {
         getItems() {
             axios
                 .get(`${API_URL}/event`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
                     },
                 })
                 .then((res) => {
-                    this.events = res.data.data
-                    this.filteredEvents = this.events
+                    this.events = res.data.data;
+                    this.filteredEvents = this.events;
                 })
                 .catch((err) => {
                     if (err.response && err.response.status === 401) {
-                        alert('Sesi login sudah berakhir, silakan login kembali.')
-                        localStorage.clear()
-                        this.$router.push({ name: 'login' })
+                        alert(
+                            "Sesi login sudah berakhir, silakan login kembali."
+                        );
+                        localStorage.clear();
+                        this.$router.push({ name: "login" });
                     } else {
-                        console.error(err)
+                        console.error(err);
                     }
-                })
+                });
         },
         searchItem() {
             this.filteredEvents = this.events.filter((event) =>
-                event.judul.toLowerCase().includes(this.keyword.toLowerCase()),
-            )
+                event.judul.toLowerCase().includes(this.keyword.toLowerCase())
+            );
         },
         goToDetail(id) {
-            this.$router.push({ name: 'event-detail', params: { id } })
+            this.$router.push({ name: "event-detail", params: { id } });
         },
         deleteEvent(id) {
-            if (!confirm('Apakah Anda yakin ingin menghapus event ini?')) return
+            if (!confirm("Apakah Anda yakin ingin menghapus event ini?"))
+                return;
             axios
                 .delete(`${API_URL}/event/${id}`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
                     },
                 })
                 .then(() => {
-                    alert('Event berhasil dihapus')
-                    this.getItems()
+                    alert("Event berhasil dihapus");
+                    this.getItems();
                 })
                 .catch((err) => {
                     if (err.response && err.response.status === 401) {
-                        alert('Sesi login sudah berakhir, silakan login kembali.')
-                        localStorage.clear()
-                        this.$router.push({ name: 'login' })
+                        alert(
+                            "Sesi login sudah berakhir, silakan login kembali."
+                        );
+                        localStorage.clear();
+                        this.$router.push({ name: "login" });
                     } else {
-                        alert('Gagal menghapus event')
-                        console.error(err)
+                        alert("Gagal menghapus event");
+                        console.error(err);
                     }
-                })
+                });
         },
     },
-}
+};
 </script>
 
 <style scoped>

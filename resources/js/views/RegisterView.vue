@@ -1,5 +1,7 @@
 <template>
-    <div class="login-container vh-100 d-flex justify-content-center align-items-center">
+    <div
+        class="login-container vh-100 d-flex justify-content-center align-items-center"
+    >
         <div class="card login-card shadow-lg rounded-4">
             <h3 class="text-center mb-4">Register</h3>
             <form @submit.prevent="submitForm">
@@ -56,7 +58,9 @@
 
                 <!-- Tombol Submit -->
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-success">Register</button>
+                    <button type="submit" class="btn btn-success">
+                        Register
+                    </button>
                 </div>
             </form>
 
@@ -80,52 +84,57 @@
 </template>
 
 <script>
-import axios from 'axios'
-import router from '@/router'
+import axios from "axios";
+import router from "@/router";
 
 export default {
     data() {
         return {
+            apiUrl: import.meta.env.VITE_API_URL, // base URL dari .env
             form: {
-                name: '',
-                email: '',
-                password: '',
-                password_confirmation: '',
+                name: "",
+                email: "",
+                password: "",
+                password_confirmation: "",
                 role_id: 2, // default role = 2 (user biasa)
             },
-            errorMessage: '',
-            successMessage: '',
-        }
+            errorMessage: "",
+            successMessage: "",
+        };
     },
     methods: {
         async submitForm() {
-            this.errorMessage = ''
-            this.successMessage = ''
+            this.errorMessage = "";
+            this.successMessage = "";
             try {
                 const response = await axios.post(
-                    'http://localhost/Suka-projek/Kalijaga-EventHub-copy1-/public/api/auth/register',
-                    this.form,
-                )
-                this.successMessage = 'Register berhasil!'
+                    `${this.apiUrl}/api/auth/register`,
+                    this.form
+                );
+
+                this.successMessage = "Register berhasil!";
 
                 // simpan data user + token ke localStorage
-                localStorage.setItem('name', response.data.data.user.name)
-                localStorage.setItem('role_id', response.data.data.user.role_id)
-                localStorage.setItem('token', response.data.data.token)
+                localStorage.setItem("name", response.data.data.user.name);
+                localStorage.setItem(
+                    "role_id",
+                    response.data.data.user.role_id
+                );
+                localStorage.setItem("token", response.data.data.token);
 
                 // redirect ke home
-                router.push({ name: 'home' })
+                router.push({ name: "home" });
             } catch (error) {
-                if (error.response && error.response.data && error.response.data.errors) {
-                    const errors = error.response.data.errors
-                    this.errorMessage = Object.values(errors).flat().join(' ')
+                if (error.response?.data?.errors) {
+                    const errors = error.response.data.errors;
+                    this.errorMessage = Object.values(errors).flat().join(" ");
                 } else {
-                    this.errorMessage = 'Terjadi kesalahan, silakan coba lagi.'
+                    this.errorMessage = "Terjadi kesalahan, silakan coba lagi.";
                 }
             }
         },
     },
-}
+};
 </script>
 
 <style scoped>

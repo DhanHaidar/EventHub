@@ -1,9 +1,13 @@
 <template>
-    <div class="login-container d-flex justify-content-center align-items-center vh-100">
+    <div
+        class="login-container d-flex justify-content-center align-items-center vh-100"
+    >
         <div class="card login-card shadow-lg rounded-4">
             <!-- Header -->
             <div class="text-center mb-4">
-                <h2 class="fw-bold text-success">EventHub UIN Sunan Kalijaga</h2>
+                <h2 class="fw-bold text-success">
+                    EventHub UIN Sunan Kalijaga
+                </h2>
                 <p class="text-muted mb-0">Sistem Manajemen Event</p>
             </div>
 
@@ -40,14 +44,21 @@
                 </div>
                 <!-- Submit -->
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-success btn-lg rounded-3">Login</button>
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-lg rounded-3"
+                    >
+                        Login
+                    </button>
                 </div>
             </form>
 
             <!-- Register Link -->
             <p class="text-center mt-3 small">
                 Belum punya akun?
-                <router-link to="/register" class="text-success fw-bold">Register</router-link>
+                <router-link to="/register" class="text-success fw-bold"
+                    >Register</router-link
+                >
             </p>
 
             <!-- Demo Login Info -->
@@ -60,39 +71,36 @@
 </template>
 
 <script>
-import axios from 'axios'
-import router from '@/router'
+import axios from "axios";
+import router from "@/router";
 
 export default {
     data() {
         return {
-            email: '',
-            password: '',
-        }
+            email: "",
+            password: "",
+        };
     },
     methods: {
         login() {
             axios
-                .post(
-                    'http://localhost/Suka-projek/Kalijaga-EventHub-copy1-/public/api/auth/login',
-                    {
-                        email: this.email,
-                        password: this.password,
-                    },
-                )
+                .post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+                    email: this.email,
+                    password: this.password,
+                })
                 .then((response) => {
-                    localStorage.setItem('email', response.data.data.email)
-                    localStorage.setItem('name', response.data.data.name)
-                    localStorage.setItem('role_id', response.data.data.role_id)
-                    localStorage.setItem('token', response.data.data.token)
-                    router.push({ name: 'home' })
+                    localStorage.setItem("email", response.data.data.email);
+                    localStorage.setItem("name", response.data.data.name);
+                    localStorage.setItem("role_id", response.data.data.role_id);
+                    localStorage.setItem("token", response.data.data.token);
+                    router.push({ name: "home" });
                 })
                 .catch((error) => {
-                    console.log(error)
-                })
+                    console.log(error);
+                });
         },
     },
-}
+};
 </script>
 
 <style scoped>
