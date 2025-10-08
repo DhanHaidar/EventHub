@@ -11,7 +11,9 @@ services:
       - "8001:8000"
     volumes:
       - .:/var/www/html
+      - /var/www/html/public/build
       - /var/www/html/vendor
+      - /var/www/html/node_modules
     networks:
       - nginx
       - postgres
