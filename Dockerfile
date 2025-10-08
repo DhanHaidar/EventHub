@@ -1,3 +1,11 @@
+FROM node:18-alpine AS builder
+
+WORKDIR /var/www/html
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
 FROM php:8.2-fpm
 
 RUN apt-get update && apt-get install -y \
@@ -16,8 +24,9 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --prefer-dist --no-scripts --no-dev
 COPY . .
+COPY --from=builder /var/www/html/public/build ./public/build
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
 EXPOSE 8000
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
