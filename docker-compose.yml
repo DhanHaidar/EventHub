@@ -1,6 +1,6 @@
 # Docker for production memanfaatkan postgre dan nginx dari server
 services:
-  laravel_katon:
+  laravel_eventhub:
     build:
       context: .
       dockerfile: Dockerfile
